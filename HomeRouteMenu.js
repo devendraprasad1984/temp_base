@@ -69,3 +69,101 @@ let arr,sum;
 arr=[4,1,2,5]; sum=9;
 option3(arr,sum);
 
+
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+
+    <style>
+        /* styles rely on the custom attribute "order-state" */
+        .order[order-state="new"] {
+            color: green;
+        }
+
+        .order[order-state="pending"] {
+            color: blue;
+        }
+
+        .order[order-state="canceled"] {
+            color: red;
+        }
+    </style>
+
+</head>
+
+<body>
+    <test id='test' about='hello' data={a:1,b:2}>hello</test>
+    <test id='wonder' about='dp' data={a:3,b:4}>wonder</test>
+    <test id='tsfunc' about='func' data={a:9,b:10} func='testF'>test function call</test>
+
+    <div show-info="name"></div>
+    <div show-info="age"></div>
+
+
+
+    <div class="order" order-state="new">
+        A new order.
+    </div>
+    <div class="order" order-state="pending">
+        pending
+    </div>
+
+    <script>
+        let testF='(xd) => { console.log("hey dp " + xd) }';
+        testF()
+
+        let funcs = {
+            testF: (xd) => { console.log("hey dp " + xd) }
+        }
+
+
+        let els = document.getElementsByTagName('test');
+        let tf;
+        // console.log(els);
+        for (let cur of els) {
+            // console.log(cur.hasAttribute('func'));
+            if (!cur.hasAttribute('func')) continue;
+            let data = cur.getAttribute('data');
+            let ff = cur.getAttribute('func');
+            //eval(func)(data);
+            funcs[ff](data);
+            //tf = new Function(func);
+            // tf.apply(data)
+            // (tf())(data)
+        }
+
+
+        let user = {
+            name: "Pete",
+            age: 25
+        };
+        for (let div of document.querySelectorAll('[show-info]')) {
+            let field = div.getAttribute('show-info');
+            div.innerHTML = user[field];
+        }
+
+        for (let div of document.querySelectorAll('.order')) {
+            let state = div.getAttribute('order-state');
+            console.log(state);
+            if (state !== 'new') continue;
+            setTimeout(() => {
+                div.innerHTML = 'canceled';
+                div.setAttribute('order-state', 'canceled');
+            }, 2000);
+        }
+    </script>
+</body>
+
+</html>
