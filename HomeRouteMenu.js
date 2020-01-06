@@ -1,63 +1,71 @@
-import React from 'react'
-import {Link, BrowserRouter,Route} from 'react-router-dom'
-import App from './App';
-import ComponentsTest from './components-test'
-import {SeasonsComponent} from './seasons'
-import {AppSeachBar} from "./AppSearchBar";
-import {AppVideoComponent} from "./appVideoComponent";
-import {AppSongs} from "./AppSongs";
-import {AppBlogPosts} from "./AppBlogPosts";
-import AppTwitchTV from "./AppTwitchTV";
-import AppContextTest from "./app_context_test";
-import HooksApp from "./App_Hooks";
-// import {} from 'semanti-ui-react'
-// https://stackoverflow.com/questions/51036731/menu-item-active-state-not-working-with-navlink-semantic-ui-react
+"use strict"
+//[1,2,3,4] sum 8 = false
+//[1,2,4,4] sum 8 = true
+//consider solution if array is sorted
+//consider solution if array is not sorted
+let op,found,ln;
+let x,y,df;
 
-class HomeRouteMenu extends React.Component {
-    state={name:'0'}
-    activeMarker=(name)=>{
-        this.setState({name:name})
-        console.log("current menu value",name," compare: ",this.state.name)
+let option1=(arr,sum)=>{
+    found=false;
+    op='found: '+found;
+    ln=arr.length;
+    for(let i=0;i<ln;i++){
+        x=arr[i];
+        for(let j=0;j<i;j++){
+            y=arr[j];
+            if(x+y===sum){
+                found=true;
+                op='Option1: '+' x= '+x+' y= '+y+' i= '+i+' j= '+j + ' found: '+found;
+                break
+            }
+        }
+        if(found) break;
     }
-
-    navigationBar = () => {
-        return (
-            <div className="ui secondary pointing menu">
-                <Link to="/"><p onClick={()=>this.activeMarker('0')} className={`item ${this.state.name==='0'?'active':''}`}>Home</p></Link>
-                <Link to="/ComponentsTest"><p onClick={()=>this.activeMarker('1')} className= {`item ${this.state.name==='1'?'active':''}`}>Test</p></Link>
-                <Link to="/SeasonsComponent"><p onClick={()=>this.activeMarker('2')} className= {`item ${this.state.name==='2'?'active':''}`}>Seasons</p></Link>
-                <Link to="/AppSeachBar"><p onClick={()=>this.activeMarker('3')} className= {`item ${this.state.name==='3'?'active':''}`}>Search Bar</p></Link>
-                <Link to="/AppVideoComponent"><p onClick={()=>this.activeMarker('4')} className= {`item ${this.state.name==='4'?'active':''}`}>Video App</p></Link>
-                <Link to="/AppSongs"><p onClick={()=>this.activeMarker('5')} className= {`item ${this.state.name==='5'?'active':''}`}>Songs App</p></Link>
-                <Link to="/AppBlogPosts"><p onClick={()=>this.activeMarker('6')} className= {`item ${this.state.name==='6'?'active':''}`}>Blogs</p></Link>
-                <Link to="/AppTwitchTV"><p onClick={()=>this.activeMarker('7')} className= {`item ${this.state.name==='7'?'active':''}`}>Streaming</p></Link>
-                <Link to="/AppContextTest"><p onClick={()=>this.activeMarker('8')} className= {`item ${this.state.name==='8'?'active':''}`}>Contexts</p></Link>
-                <Link to="/HooksApp"><p onClick={()=>this.activeMarker('9')} className= {`item ${this.state.name==='9'?'active':''}`}>Hooks & Reusable functions</p></Link>
-            </div>
-        )
-    }
-
-    render() {
-        return (
-            <div>
-                <BrowserRouter>
-                    <div>
-                        {this.navigationBar()}
-                        <Route exact path="/" component={App}></Route>
-                        <Route exact path="/ComponentsTest" component={ComponentsTest}></Route>
-                        <Route exact path="/AppSeachBar" component={AppSeachBar}></Route>
-                        <Route exact path="/AppVideoComponent" component={AppVideoComponent}></Route>
-                        <Route exact path="/AppSongs" component={AppSongs}></Route>
-                        <Route exact path="/AppBlogPosts" component={AppBlogPosts}></Route>
-                        <Route exact path="/AppTwitchTV" component={AppTwitchTV}></Route>
-                        <Route exact path="/AppContextTest" component={AppContextTest}></Route>
-                        <Route exact path="/HooksApp" component={HooksApp}></Route>
-                        <Route exact path="/SeasonsComponent" component={SeasonsComponent}></Route>
-                    </div>
-                </BrowserRouter>
-            </div>
-        )
-    }
+    console.log('option1(2 for loops, not so optimum):',op)
 }
 
-export default HomeRouteMenu
+let option2=(arr,sum)=>{
+    found=false;
+    op='found: '+found;
+    ln=arr.length;
+    for(let i=0;i<ln;i++){
+        x=arr[i];
+        df=sum-x;
+        for(let j=i+1;j<ln;j++){
+            if(df===arr[j]){
+                found=true;
+                op='x '+x+' sum '+sum+' diff complement of sum '+df+' found: '+found;
+                break;
+            }
+        }        
+    }
+    console.log('option2(2 loop, not so fast, but better than 2 for as it only looks for complement of sum-x (log complex nlogn)):',op)
+}
+
+let option3=(arr,sum)=>{
+    found=false;
+    op='found: '+found;
+    ln=arr.length;
+    let comps=[];
+    for(let i=0;i<ln;i++){
+        x=arr[i];
+        if(comps.indexOf(x)!==-1){
+            found=true;
+            op='val '+x+' sum '+sum+' complement('+sum+'-'+x+'='+(sum-x)+') found '+found+' '+comps+', pair is '+x+' & '+(sum-x)+' at '+arr.indexOf(x)+' & '+arr.indexOf(sum-x);
+            break;
+        }
+        comps.push(sum-x);
+    }
+    console.log('option3(linear complexity, fastest) works well with sorted and unsorted array also:',op)
+}
+
+
+let arr,sum;
+// arr=[1,2,3,4]; sum=8;
+// option1(arr,sum);
+// arr=[1,2,4,5]; sum=9;
+// option2(arr,sum);
+arr=[4,1,2,5]; sum=9;
+option3(arr,sum);
+
