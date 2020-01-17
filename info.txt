@@ -17,6 +17,14 @@ format partion on ubuntu
 12. Modify the reserved space by running the "sudo tune2fs -m 1 /dev/sdb1" command in the Terminal. By default, five percent of the drive's total space is reserved for root user; this command reserves only one percent. This last step is optional but recommended.
 
 
+make bootable drive from ubuntu terminal
+https://vitux.com/how-to-create-a-bootable-usb-stick-from-the-ubuntu-terminal/
+df
+/dev/sdb1       30655856       16  30655840   1% /media/dp/F3F0-2C6E
+sudo umount /dev/sdb1
+sudo dd bs=4M if=/media/dp/dpx/linuxMint/linuxmint-19.3-cinnamon-64bit.iso of=/dev/sdb1 status=progress oflag=sync
+
+
 mount partition permanently: https://www.binarytides.com/ubuntu-automatically-mount-partition-startup/
 sudo fdisk -l
 Device     Boot     Start       End   Sectors   Size Id Type
