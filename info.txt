@@ -1,0 +1,2076 @@
+https://itsfoss.com/guide-install-linux-mint-16-dual-boot-windows/
+
+linuxmint: http://mirrors.evowise.com/linuxmint/stable/19.3/linuxmint-19.3-cinnamon-64bit.iso
+
+format partion on ubuntu
+1. Go to the "Applications" menu, select "Accessories" and click on "Terminal" to open the Terminal utility.
+2. Type "sudo lshw -C disk" in the Terminal and press "Enter" to run the command. This command helps you determine the path assigned to your new hard drive.
+3. Write down the "logical name" setting, for example "/dev/sda".
+4. Start fdisk, the default utility used to partition disks, by running the "sudo fdisk /dev/sda" command in the Terminal.
+5. Type "n" and press "Enter" to create a new partition.
+6. Type "p" and press "Enter" to make the partition a primary partition.
+7. Type "1" when prompted for the partition number and press "Enter."
+8. Type "1" when fdisk asks about the first cylinder and press "Enter." The partition will start at the beginning of the hard drive.
+9. Type "w" and press "Enter" to write the partition table to disk. Your hard drive is now partitioned. Note that the partition's logical name is "/dev/sdb1".
+10. Close the fdisk utility.
+11. Format the partition as ext3, the filesystem recommended for Ubuntu, by running the "sudo mkfs -t ext3 /dev/sdb1" command in the Terminal. If you want to format the partition to FAT32 or NTFS, replace "ext3" with "fat32" or "ntfs," respectively.
+12. Modify the reserved space by running the "sudo tune2fs -m 1 /dev/sdb1" command in the Terminal. By default, five percent of the drive's total space is reserved for root user; this command reserves only one percent. This last step is optional but recommended.
+
+
+mount partition permanently: https://www.binarytides.com/ubuntu-automatically-mount-partition-startup/
+sudo fdisk -l
+Device     Boot     Start       End   Sectors   Size Id Type
+/dev/sda1  *         2048 214843391 214841344 102.5G 83 Linux
+/dev/sda2       214843392 371210239 156366848  74.6G 83 Linux
+/dev/sda3       371210240 488396799 117186560  55.9G 83 Linux
+
+sudo blkid
+/dev/sda1: UUID="51c3ada2-813a-4c1c-aa98-d1f4f68c0d51" TYPE="ext4" PTTYPE="dos" PARTUUID="c86d5ddd-01"
+/dev/sda2: LABEL="dpx" UUID="dd801a1b-5e6c-499b-8639-a9d02979518f" TYPE="ext4" PARTUUID="c86d5ddd-02"
+/dev/sda3: LABEL="mint" UUID="bed409c4-3b50-4537-94dc-ac407079cad0" TYPE="ext4" PARTUUID="c86d5ddd-03"
+
+
+Add partition to fstab
+# /etc/fstab: static file system information.
+For example take the line :
+UUID=dd801a1b-5e6c-499b-8639-a9d02979518f /media/dp/dpx               ext4    errors=remount-ro,auto,exec,rw,user 0       0
+UUID=bed409c4-3b50-4537-94dc-ac407079cad0 /media/dp/mint               ext4    errors=remount-ro,auto,exec,rw,user 0       0
+
+user,errors=remount-ro,auto,exec,rw
+
+
+dp ubuntu logical name: sudo lshw -C disk
+my logical drive name: /dev/sda
+
+make ubuntu faster:
+sudo add-apt-repository ppa:danielrichter2007/grub-customizer 
+sudo apt update
+sudo apt install grub-customizer
+
+sudo gedit /etc/default/grub &
+And change GRUB_TIMEOUT=10 to GRUB_TIMEOUT=2. This will change the boot time to 2 seconds. Prefer not to put 0 here as you will lose the privilege to change between OS and recovery options. Once you have changed the grub configuration, update grub to make the change count:
+sudo update-grub
+sudo grub-mkconfig -o /boot/grub/grub.cfg
+
+sudo apt-get install preload
+sudo add-apt-repository ppa:apt-fast/stable
+sudo apt-get update
+sudo apt-get install apt-fast
+suppress language related udpates : sudo gedit /etc/apt/apt.conf.d/00aptitude & And add the following line at the end of this file: Acquire::Languages "none";
+sudo add-apt-repository ppa:linrunner/tlp
+sudo apt-fast update
+sudo apt-fast install tlp tlp-rdw
+sudo tlp start
+sudo apt-fast install indicator-cpufreq
+
+use lightweight desktop: https://xfce.org/  http://archive.xfce.org/xfce/4.14/  or https://lxde.org/
+Open a terminal window.
+sudo apt-fast install xubuntu-desktop
+Accept any dependencies and allow the installation to complete.
+Log out and log in, choosing your new XFCE desktop.
+
+sudo add-apt-repository ppa:embrosyn/cinnamon
+sudo apt-fast update
+sudo apt-fast install cinnamon
+
+######sudo apt-get install ppa-purge
+sudo ppa-purge ppa:embrosyn/cinnamon
+
+
+
+
+Ubuntu fix broken package (best solution)
+sudo apt --fix-broken install
+sudo apt-fast install --reinstall $(</var/lib/dpkg/status sed -n 's/^Package://p')
+sudo dpkg -rp crossftp
+
+sudo apt-fast --fix-missing update
+sudo dpkg --configure -a
+sudo dpkg -l | grep ^..r
+sudo dpkg --remove --force-remove--reinstreq
+sudo apt clean
+sudo apt update
+sudo rm /var/lib/apt/lists/lock
+sudo rm /var/cache/apt/archives/lock
+sudo apt-fast install -f
+if the problem of a broken package still exist the solution is to edit the dpkg status file manually. ...
+Unlock the dpkg – (message /var/lib/dpkg/lock)
+sudo fuser -vki /var/lib/dpkg/lock.
+sudo dpkg –configure -a. For 12.04 and newer:
+sudo gedit /var/lib/dpkg/status
+fix breaks manually http://thepcspy.com/read/fixing-dpkg-status-corruption/
+sudo apt-fast install pcregrep
+pcregrep -nM '\n\s*\n[^P]+' /var/lib/dpkg/status
+
+
+
+
+PV aws case id: 03248586
+
+http://phydeve.epizy.com/imozar/index-1.html
+http://anaenders.com/
+http://ianenders.com/
+
+https://javascript.info/dom-attributes-and-properties
+
+ssh-keygen -t rsa -b 4096 -C "your_email@example.com"
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/dpgit
+phrase is dpgit
+
+git clone git@github.com:devendraprasad1984/PythonAndNodeSamples.git
+https://github.com/devendraprasad1984/PythonAndNodeSamples.git
+
+echo "# web" >> README.md
+git init
+git add README.md
+git commit -m "first commit"
+git remote add origin https://github.com/devendraprasad1984/web.git
+git push -u origin master
+
+…or push an existing repository from the command line
+git remote add origin https://github.com/devendraprasad1984/web.git
+git push -u origin master
+
+
+jazz up bash terminal: https://www.freecodecamp.org/news/jazz-up-your-bash-terminal-a-step-by-step-guide-with-pictures-80267554cb22/
+for mac right click terminal files to open: https://github.com/lysyi3m/macos-terminal-themes/tree/master/schemes
+for linux: https://github.com/Powerlevel9k/powerlevel9k
+
+terminals: http://www.linuxandubuntu.com/home/10-best-linux-terminals-for-ubuntu-and-fedora
+
+checking all versions of python: ls -1 /usr/bin/python* | grep '[2-3].[0-9]$'
+sudo apt purge python2.7-minimal
+alias python=python3
+alias pip=pi3
+
+
+machine learning - abhishek thakur
+https://www.youtube.com/watch?v=ArygUBY0QXw
+download code server: vs code in browser
+down on this page: downlad linux binary: https://github.com/cdr/code-server
+wget https://github.com/cdr/code-server/releases/download/2.1692-vsc1.39.2/code-server2.1692-vsc1.39.2-linux-x86_64.tar.gz
+code-server2.1692-vsc1.39.2-linux-x86_64.tar.gz’ saved [47303734/47303734]
+tar -zxvf code-server2.1692-vsc1.39.2-linux-x86_64.tar.gz
+PASSWORD=dp ./code-server PORT=8080
+kaggle.com
+https://www.kaggle.com/c/cat-in-the-dat
+
+
+tech lead - python js react sql/plsq aws
+http://dpresume.com
+http://dpresume.com/older/
+http://dpresume.com/react-build/
+https://github.com/devendraprasad1984/PythonAndNodeSamples/tree/master/python
+
+google: https://www.impactinterview.com/2009/10/140-google-interview-questions/
+https://www.w3resource.com/python-exercises/
+https://www.practicepython.org/
+
+
+rbs anywhere url: https://rbsconnect.rbspeople.com/vpn/index.html
+dig rbsconnect.rbspeople.com and add ip address to the citrix web all initial account page (rbsconnect.rbspeople.com 5	IN	A	155.136.60.6
+)
+openssl x509 -inform der -in "/media/dp/dpx/softwares/rbs_ca" -out "/media/dp/dpx/softwares/rbs_cert.pem"
+Save the certificate (in X.509 Certificate (PEM) format) to your Desktop and give it the file extension .crt
+donwload certificate from rbsconnect.rbspeople.com and add it to citrix workspace app
+Sudo copy the file to /opt/Citrix/ICAClient/keystore/cacerts and then execute command /opt/Citrix/ICAClient/util/ctx_rehash
+RBS citrix: https://www.citrix.com/en-in/downloads/citrix-workspace/
+RBS: https://www.citrix.com/en-in/products/receiver.html
+https://rbsconnect.rbspeople.com/vpn/index.html
+
+
+Amazon SDE: 23280666369383
+
+jyoti adhar: 9430 6862 3504
+
+
+php apache portal windows
+https://www.uwamp.com/en/?page=download
+https://laragon.org/download/
+https://tutorials.ubuntu.com/tutorial/install-and-configure-apache#2
+
+
+wheel nav: http://wheelnavjs.softwaretailoring.net/index.html
+ssh dlrgvkes@dpresume.com / 103.228.112.39->3vg3wWRm56
+
+manpower satish work:
+https://colorlib.com/wp/consulting-website-templates/
+https://www.manpowergroupsolutions.com/
+http://themewinter.com/demo/html/bizipress/blue/index-5.html
+http://themewinter.com/demo/html/bizipress/blue/index-8.html
+http://alnahiya.com/manpower/
+
+https certificate
+https://www.youtube.com/watch?v=R-Yh6THi7aU
+https://www.youtube.com/watch?v=GPcznB74GPs
+
+
+
+cast pc to tv
+https://www.omgubuntu.co.uk/2019/01/chromecast-tv-gnome-shell-extension
+---------------
+rufus bootable disk is for windows only but on ubuntu/linux, we can do following to make bootable drives
+Rufus app is available for Windows platform only.
+Plug in the USB flash drive and determine the device it's mounted on with the command:
+sudo fdisk -l 
+This time around it was /dev/sdc1 for me, so I'll use that as my example.
+Unmount the device
+umount /dev/sdc1 
+The next step is to copy the iso. Copy to the device not partition (i.e copy to sdc not sdc1) as shown below:
+sudo dd if=filename.iso of=/dev/sdc bs=4M
+Perform final steps :
+sync   
+sudo eject /dev/sdc
+----------------------------
+
+google seo:
+submit sites to: trafficflowseo.com
+https://search.google.com/addurl
+https://search.google.com/search-console?resource_id=http://sites.google.com/site/devendraprasad1984/
+Copy the TXT record below into the DNS configuration for dpresume.com
+google-site-verification=NFJ0uiao1qj3i3Lwolfi2_AEX5RKhvE08341V4D5VpE
+
+
+ubuntu search place icons in: /usr/local/share/applications and add it in favourites
+
+
+python dp:
+https://python-patterns.guide/
+https://www.tutorialspoint.com/python_design_patterns/index.htm
+https://python-3-patterns-idioms-test.readthedocs.io/en/latest/PatternConcept.html
+https://medium.com/@sheikhsajid/design-patterns-in-python-part-1-the-strategy-pattern-54b24897233e
+https://stackoverflow.com/questions/606448/python-design-patterns
+https://subscription.packtpub.com/book/application_development/9781783989324/16/ch16lvl1sec84/a-real-life-example
+
+sublime html & js live edit: https://packagecontrol.io/installation#st3
+package: liveReload
+
+install win7 booteable drive: http://www.webupd8.org/2010/10/create-bootable-windows-7-usb-drive.html
+https://o7planning.org/en/11883/installing-windows-7-virtual-machine-on-virtualbox#a18908905
+https://www.osboxes.org/fedora/#fedora-29-vbox
+
+/home/devendra/VirtualBox VMs/win7/Snapshots
+virtual box module load error sbin/vboxconfig->fix->bios->secure boot-> change UEFI to other OS or legacy boot
+https://askubuntu.com/questions/413594/what-does-no-bootable-medium-found-mean-in-virtualbox
+
+improve ubuntu: https://itsfoss.com/speed-up-ubuntu-1310/
+sudo gedit /etc/default/grub &
+And change GRUB_TIMEOUT=10 to GRUB_TIMEOUT=2.
+sudo update-grub
+sudo apt-get install preload
+sudo apt-get install apt-fast
+sudo gedit /etc/apt/apt.conf.d/00aptitude and add at end Acquire::Languages "none";
+sudo add-apt-repository ppa:linrunner/tlp
+sudo apt-get update
+sudo apt-get install tlp tlp-rdw
+sudo tlp start
+sudo apt-get install indicator-cpufreq
+
+
+git
+sudo add-apt-repository ppa:git-core/ppa 
+sudo apt-fast update
+sudo apt-fast install git
+
+sudo apt install make libssl-dev libghc-zlib-dev libcurl4-gnutls-dev libexpat1-dev gettext unzip
+https://github.com/git/git/releases
+cd /home/devendra/deven/software
+--sudo wget https://github.com/git/git/archive/v2.24.0.tar.gz -O git.tar.gz
+sudo tar -xf git-2.24.1.tar.gz
+sudo make prefix=/usr/local all
+sudo make prefix=/usr/local install
+
+git config --global user.name "Devendra Prasad"
+git config --global user.email "devendraprasad1984@gmail.com"
+git config --list
+save username and password in git
+git config --global credential.helper store
+git pull / push
+git config --global user.name "devendraprasad1984@gmail.com"
+git config --global user.password "Rbs6200#"
+
+
+https://softlay.net/download/file
+https://softfamous.com/microsoft-windows-7-ultimate-official-iso-image/
+sudo apt-get install gparted
+sudo apt-get install ntfs-3g
+
+libreoffice
+sudo add-apt-repository ppa:libreoffice/ppa
+sudo apt-get update
+sudo apt-get install libreoffice
+
+sudo apt-get install ppa-purge && sudo ppa-purge ppa:libreoffice/ppa
+
+install office on ubuntu
+https://gist.github.com/raelgc/4ccc023830bfd12c0227
+/usr/share/playonlinux
+
+
+openoffice
+sudo apt-get remove LibreOffice*
+https://www.openoffice.org/download/ and install deb packages
+wget sourceforge.net/projects/openofficeorg.mirror/files/4.1.1/binaries/en-GB/Apache_OpenOffice_4.1.1_Linux_x86-64_install-deb_en-GB.tar.gz
+/home/devendra/deven/software/Apache_OpenOffice_4.1.6_Linux_x86-64_install-deb_en-US/en-US/DEBS
+sudo dpkg -i *.deb
+cd desktop-integration
+sudo dpkg -i *.deb
+remove: sudo dpkg -r openoffice
+sudo apt-get remove --purge openoffice*
+sudo apt-get install --reinstall openoffice*
+
+
+
+sudo apt-get install powertop
+sudo powertop
+sudo powertop --auto-tune
+
+remove all with its configuration
+sudo apt-get purge package-name
+
+create symbolic link
+ln -s source_file myfile
+ln -s /home/devendra/deven/software/node-v10.15.3-linux-x64/bin/node node
+ln -s /home/devendra/deven/software/ideaIU-2018.3.4-no-jdk/idea-IU-183.5429.30/bin/idea.sh intelliJ
+
+some ubuntu command
+alt+f2-run
+ctrl+alt+f* keys -
+ctrl+alt+t-terminal
+
+git: devendraprasad1984@gmail.com rbs6200#
+
+software design patterns: https://sourcemaking.com/design_patterns
+
+react: https://www.youtube.com/watch?v=Ke90Tje7VS0
+https://www.youtube.com/watch?v=DLX62G4lc44
+
+https://dev.to/drminnaar/11-react-examples-2e6d
+react advance:https://medium.com/javascript-in-plain-english/another-react-tutorial-best-practices-for-react-redux-sagas-19d62851725
+https://itnext.io/using-advanced-design-patterns-to-create-flexible-and-reusable-react-components-part-1-dd495fa1823
+lodash: http://zetcode.com/javascript/lodash/
+https://colintoh.com/blog/lodash-10-javascript-utility-functions-stop-rewriting
+go golang: https://gobyexample.com
+
+aggrid: https://medium.com/ag-grid/learn-to-customize-react-grid-in-less-than-10-minutes-2ce6845646bb
+aggrid: https://adazzle.github.io/react-data-grid/docs/examples/simple-grid
+
+pypy3 portable: https://github.com/squeaky-pl/portable-pypy
+
+https://www.xvideos2.com/video15631487/desi_wife_hindi_audio
+
+
+ES6: https://medium.com/@vigowebs/frequently-asked-es6-interview-questions-and-answers-e3fb7f2dba2
+ES8: https://hackernoon.com/es8-was-released-and-here-are-its-main-new-features-ee9c394adf66
+devOps: https://raygun.com/blog/best-devops-tools/
+react advance:https://medium.com/javascript-in-plain-english/another-react-tutorial-best-practices-for-react-redux-sagas-19d62851725
+https://dev.to/drminnaar/11-react-examples-2e6d
+https://itnext.io/using-advanced-design-patterns-to-create-flexible-and-reusable-react-components-part-1-dd495fa1823
+lodash:
+http://zetcode.com/javascript/lodash/
+https://colintoh.com/blog/lodash-10-javascript-utility-functions-stop-rewriting
+go golang:
+https://gobyexample.com
+react tutor: ste.grider@gmail.com->tw: @sg_in_sf->github.com/stephengrider
+demo react: https://dev.to/drminnaar/11-react-examples-2e6d
+archi qs: https://www.wisdomjobs.com/e-university/togaf-interview-questions.html
+https://www.glassdoor.co.in/Interview/india-enterprise-architect-interview-questions-SRCH_IL.0,5_IN115_KO6,26.htm
+https://careers.simplicable.com/careers/new/101-enterprise-architecture-interview-questions
+python algo Qs: https://www.geeksforgeeks.org/top-10-algorithms-in-interview-questions/
+python test: https://www.tutorialspoint.com/python/python_questions_answers
+
+realtime react examples: https://react.rocks/tag/Realtime
+http://www.javadecompilers.com/
+https://reactjs.org/
+https://babeljs.org/
+https://semantic-ui.com
+https://unsplash.com/developers
+console.developers.google.com
+redux dev tools: github.com/zalmoxisus/redux-devtools-extension -> chrome store->https://chrome.google.com/webstore/search/redux%20dev%20tools (redux devtools)
+http://redux-form.com
+rest api server: npmjs.com/package/json-server
+rtmp server: github.com/illuspas/Node-Media-Server
+obs open broadcaster streams videos: obsproject.com -> 
+sudo apt-get install ffmpeg
+sudo add-apt-repository ppa:obsproject/obs-studio
+sudo apt-get update
+sudo apt-get install obs-studio
+android-x86 & install instruction:
+	https://osdn.net/dl/android-x86/android-x86-8.1-r1.x86_64.rpm
+	http://www.android-x86.org/releases/releasenote-8-1-r1
+	$ sudo apt install alien
+	$ sudo alien -ci android-x86-8.1-r1.x86_64.rpm
+	All files will be installed to the /android-8.1-r1/ subdirectory and boot entries will be added to grub2 menu. Reboot and choose android-x86 item from the menu to boot Android-x86. Alternatively, you can launch Android-x86 in a QEMU virtual machine by the installed qemu-android script: $ sudo qemu-android
+	sudo apt-get remove android-x86
+
+How to Uninstall Android Studio 2.2 on Ubuntu 16.04
+Delete the android-studio folder;
+Delete the sdk folder if it is in not inside the android-studio directory;
+Delete ~/.AndroidStudio2.2/, which contains config and system;
+Delete ~/.android;
+Delete ~/.local/share/applications/jetbrains-studio.desktop, if you created a shortcut using Configure->Create Desktop Entry.
+/usr/share/applications
+/usr/local/share/applications
+
+desktop entry to .desktop file
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Sublime Text
+GenericName=Text Editor
+Comment=Sophisticated text editor for code, markup and prose
+Exec=/opt/sublime_text/sublime_text %F
+Terminal=false
+MimeType=text/plain;
+Icon=sublime-text
+Categories=TextEditor;Development;
+StartupNotify=true
+Actions=Window;Document;
+
+[Desktop Action Window]
+Name=New Window
+Exec=/opt/sublime_text/sublime_text -n
+OnlyShowIn=Unity;
+
+[Desktop Action Document]
+Name=New File
+Exec=/opt/sublime_text/sublime_text --command new_file
+OnlyShowIn=Unity;
+
+
+
+
+npmjs.com/package/flv.js
+
+git config --global credential.helper 'cache --timeout 9200'
+git add .
+git commit -m "update"
+git push
+
+msfont
+https://www.ostechnix.com/install-microsoft-windows-fonts-ubuntu-16-04/
+
+linux dist: https://upload.wikimedia.org/wikipedia/commons/1/1b/Linux_Distribution_Timeline.svg
+
+
+git config --global user.name "devendraprasad1984@gmail.com"
+git config --global user.password "rbs6200#"
+
+dpkg --get-selections | grep mysql
+apt-cache show mysql
+locate mysql
+
+streamy-react: client id: 217054210790-pr0kbfv8e68md93p8bddpspabssansa5.apps.googleusercontent.com
+streamy-react: secret key: qy6AH678c438SrQR4QTvEaju
+
+http://twitch.tv/directory/game/Programming - see how people around the world program and solve different problems
+OBS - Open Broadcasting Software - video streaming software & recording desktop working
+RTMP - Real Time Messaging Protocol
+
+babel- ES5(all browser),ES2015(almost all),(16,17,18,19)(poor support) - hence babel is used for cross browser support for any ver of js, output es5 code
+while cerate react, react-dom, react-scripts (webpack,babel,dev server)
+webpack is bunlder
+component nesting, reusability, configuration
+component lifecycle: constructore(init)->render(jsx)->componentDidMount(data load)->componentDidUpdate(state changes/updares/rerender)->componentWillUnmount(final cleanup)
+other: shouldComponentUpdate, getDrivedStateFromProps, getSnapshotBeforeUpdate
+redux with insurance analogy
+redux:action creator->action->dispatch->reducers->state
+insurance: person dropping off form->the form->form receiver->departments->compiled department data
+
+https://cdnjs.cloudflare.com/ajax/libs/redux/4.0.1/redux.min.js
+
+http://plugins.netbeans.org/PluginPortal/
+
+netbeans slowness heapsize
+i'm facing the same issue, but it works fine after increase the heap size by adding -J-Xmx2048m in <NETBEANS_DIR>\etc\netbeans.conf
+mine looks like this: netbeans_default_options="-J-client -J-Xss2m -J-Xms2048m -J-Xmx2048m -J-XX:PermSize=32m ......
+
+https://pages.github.com/
+
+netstat -pan | grep mysql
+netstat -nlt | grep 3306
+netstat -pan | grep 3306
+netstat -anp | grep -i established
+
+https://askubuntu.com/questions/337874/change-apache-document-root-folder-to-secondary-hard-drive
+sudo su - root
+chmod -R 777 <foldername>
+service --status-all
+sudo apt-get update && sudo apt-get upgrade
+sudo apt autoremove
+sudo apt remove apache2 --purge
+screen recorder: sudo apt install kazam
+
+sudo apt-get purge `dpkg -l | grep apache2| awk '{print $2}' |tr "\n" " "`
+sudo add-apt-repository ppa:ondrej/apache2
+sudo apt-get install software-properties-common
+sudo apt-get update
+
+sudo apt-get purge `dpkg -l | grep php| awk '{print $2}' |tr "\n" " "`
+sudo add-apt-repository ppa:ondrej/php
+sudo apt-get install software-properties-common
+sudo apt-get install php7.2 php5.6
+
+node,npm install latest in zip and save and point it in .bashrc file and point to node and npm
+sudo apt-get install wine-stable xterm yarn pypy python3.7 python3-pip nodejs npm default-jdk apache2 php7.2 phpmyadmin nginx
+sudo apt-get remove python-pip python3.7 python3-pip python-dev python
+sudo apt-get install alacarte
+vypr vpn:
+https://support.goldenfrog.com/hc/en-us/articles/360004948872-VyprVPN-OpenVPN-Setup-for-Linux-Ubuntu-
+sudo apt-get install -y network-manager-openvpn network-manager-openvpn-gnome
+sudo service network-manager restart
+sudo wget https://www.goldenfrog.website/downloads/openvpn/ca.vyprvpn.com.crt -O /etc/openvpn/ca.vyprvpn.com.crt
+
+chromium browser:
+sudo add-apt-repository ppa:canonical-chromium-builds/stage
+sudo apt update
+sudo apt install chromium-browser
+sudo apt install chromium-browser-l10n
+sudo apt install chromium-codecs-ffmpeg
+sudo apt install chromium-codecs-ffmpeg-extra
+
+
+you can put any application here and that will start coming in the application search and can then add it to the favourite also
+root@dpz580:/usr/share# chmod 777 -R application
+extra codecs to play dat files: sudo apt-get install w64codecs libdvdcss2
+sudo apt-get install vlc
+video converter: https://launchpad.net/~stebbins/+archive/ubuntu/handbrake-releases
+sudo apt-get install handbrake-gtk
+sudo apt-get install handbrake-cli
+usage: HandBrakeCLI -i /path/to/source -o ../Desktop/my_output.mp4
+cd /home/devendra/deven/mov/sis
+HandBrakeCLI -i 1a.DAT -o 1a.mp4
+HandBrakeCLI -i 1b.DAT -o 1b.mp4
+HandBrakeCLI -i 2.DAT -o 2.mp4
+HandBrakeCLI -i 3a.DAT -o 3a.mp4
+HandBrakeCLI -i 3b.DAT -o 3b.mp4
+
+nginx install
+https://www.digitalocean.com/community/tutorials/how-to-install-nginx-on-ubuntu-18-04
+sudo apt update
+sudo apt install nginx
+sudo ufw app list
+sudo ufw allow 'Nginx HTTP'
+sudo ufw status
+systemctl status nginx
+ip addr show eth0 | grep inet | awk '{ print $2; }' | sed 's/\/.*$//'
+sudo systemctl start nginx
+sudo systemctl stop nginx
+sudo systemctl restart nginx
+sudo systemctl reload nginx
+sudo systemctl enable/disable nginx
+server nginx contents
+make /etc/nginx/sites-available/xyzabc.com and paste
+server {
+        listen 80;
+        listen [::]:80;
+
+        root /var/www/example.com/html;
+        index index.html index.htm index.nginx-debian.html;
+
+        server_name example.com www.example.com;
+
+        location / {
+                try_files $uri $uri/ =404;
+        }
+}
+sudo ln -s /etc/nginx/sites-available/example.com /etc/nginx/sites-enabled/
+
+To avoid a possible hash bucket memory problem that can arise from adding additional server names, it is necessary to adjust a single value in the /etc/nginx/nginx.conf file. Open the file:
+sudo nano /etc/nginx/nginx.conf
+Find the server_names_hash_bucket_size directive and remove the # symbol to uncomment the line:
+
+Content
+/var/www/html: The actual web content, which by default only consists of the default Nginx page you saw earlier, is served out of the /var/www/html directory. This can be changed by altering Nginx configuration files.
+Server Configuration
+/etc/nginx: The Nginx configuration directory. All of the Nginx configuration files reside here.
+/etc/nginx/nginx.conf: The main Nginx configuration file. This can be modified to make changes to the Nginx global configuration.
+/etc/nginx/sites-available/: The directory where per-site server blocks can be stored. Nginx will not use the configuration files found in this directory unless they are linked to the sites-enabled directory. Typically, all server block configuration is done in this directory, and then enabled by linking to the other directory.
+/etc/nginx/sites-enabled/: The directory where enabled per-site server blocks are stored. Typically, these are created by linking to configuration files found in the sites-available directory.
+/etc/nginx/snippets: This directory contains configuration fragments that can be included elsewhere in the Nginx configuration. Potentially repeatable configuration segments are good candidates for refactoring into snippets.
+Server Logs
+/var/log/nginx/access.log: Every request to your web server is recorded in this log file unless Nginx is configured to do otherwise.
+/var/log/nginx/error.log: Any Nginx errors will be recorded in this log.
+
+jenkin:
+wget -q -O - https://pkg.jenkins.io/debian-stable/jenkins.io.key | sudo apt-key add -
+deb https://pkg.jenkins.io/debian-stable binary/
+
+sudo apt-get update
+sudo apt-get install jenkins
+
+docker pull jenkins/jenkins
+docker pull jenkins/jenkins:lts
+
+docker:
+https://docs.docker.com/install/linux/docker-ce/ubuntu/
+sudo apt-get remove docker docker-engine docker.io containerd runc
+sudo apt-get update
+sudo apt-get install apt-transport-https ca-certificates curl gnupg-agent software-properties-common
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+Verify that you now have the key with the fingerprint 9DC8 5822 9FC7 DD38 854A E2D8 8D81 803C 0EBF CD88, by searching for the last 8 characters of the fingerprint.
+sudo apt-key fingerprint 0EBFCD88
+
+sudo apt-get update
+sudo apt-get install docker-ce docker-ce-cli containerd.io
+apt-cache madison docker-ce
+
+test: sudo docker run hello-world
+
+code quality: 
+https://www.sourcemeter.com/
+pip install flawfinder
+sudo apt-get install pylint
+https://www.atlassian.com/software/crucible
+https://www.gerritcodereview.com/
+http://codestriker.sourceforge.net/
+https://github.com/wireghoul/graudit 
+
+
+php
+install composer: curl -sS https://getcomposer.org/installer | php
+/home/devendra/deven/software/php/PHPMailer-master/composer.phar
+php composer.phar
+
+
+
+
+
+https://www.hostingadvice.com/how-to/install-phpmyadmin-on-ubuntu/
+sudo apt-get install -y phpmyadmin 
+(localhost->root->admin1234)
+/etc/apache2/conf-enabled/phpmyadmin.conf
+
+sudo systemctl unmask apache2
+sudo service apache2 restart
+
+php7.2-cgi php-xdebug php-soap php-curl kate bluefish sublime-text-installer
+sudo apt-get install yarn pypy nodejs default-jdk apache2 apache2-doc apache2-utils sublime-text-installer
+complete clean removal: apt remove --purge apache2 apache2-data apache2-bin
+
+dpkg -l | grep apache2
+sudo dpkg --configure -a
+sudo apt-get install -f
+apt-cache policy apache2
+sudo apt remove 
+sudo apt-get update
+sudo apt-get upgrade
+sudo nano /etc/apt/sources.list
+
+The main problem is missed /etc/apt/sources.list. You can recreate it with:
+sudo nano /etc/apt/sources.list
+deb http://archive.ubuntu.com/ubuntu/ trusty main restricted universe multiverse  
+deb http://archive.ubuntu.com/ubuntu/ trusty-updates main restricted universe multiverse
+deb http://archive.ubuntu.com/ubuntu/ trusty-backports main restricted universe multiverse
+deb http://security.ubuntu.com/ubuntu trusty-security main restricted universe multiverse  
+deb http://archive.canonical.com/ubuntu trusty partner    
+deb http://extras.ubuntu.com/ubuntu trusty main   
+
+
+
+
+sudo ls –l /var/lib/dpkg/info | grep –i apache2
+sudo mv /var/lib/dpkg/info/package_name.* /tmp
+sudo apt-get update
+
+
+google web fonts: sudo apt-get install typecatcher
+fix external drive mount:
+ls /dev/ | grep sd
+sudo add-apt-repository universe
+sudo apt update
+sudo apt install exfat-fuse exfat-utils
+sudo apt-get install ntfs-3g
+sudo apt-get install ntfsprogs
+sudo ntfsfix /dev/sdb1
+/var/lib/dpkg/lock-frontend
+Once you have installed these packages, go to file manager and click on the USB disk again to mount it. There is no need to replug the USB. It should be mounted straightaway.
+
+npm install -g gulp grunt nodemon webpack
+sudo apt install mysql-client-core-5.7
+sudo apt install mariadb-client-core-10.1
+sudo apt install mysql-server
+/etc/init.d/mysql status
+sudo apt install net-tools
+mysql -u root -h localhost -p
+
+SELECT User, Host, authentication_string FROM mysql.user;
+CREATE USER 'dp123'@'localhost' IDENTIFIED BY 'admin123';
+create database testdb;
+GRANT ALL PRIVILEGES ON testdb.* TO 'dp123'@'localhost';
+GRANT ALL PRIVILEGES ON employees.* TO 'dp123'@'localhost';
+ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'admin123';
+FLUSH PRIVILEGES;
+GRANT ALL PRIVILEGES ON *.* TO 'username'@'localhost' IDENTIFIED BY 'password';
+mysql -u dp123 -p
+mysql -u root -p
+pwd:admin123
+
+service mysql restart/start/stop
+
+mysql run from a file
+mysql> use testdb;
+mysql> source employees.sql;
+source employees_partitioned.sql
+
+udemy coupons:
+UDEAFFBR219
+19VALENTINES12A
+30MSTUDENTS10
+GALEN19
+
+
+
+mongodb:
+sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 9DA31620334BD75D9DCB49F368818C72E52529D4
+echo "deb [ arch=amd64 ] https://repo.mongodb.org/apt/ubuntu bionic/mongodb-org/4.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-4.0.list
+sudo apt-get update
+sudo apt-get install -y mongodb
+/var/lib/mongodb
+/etc/mongod.conf
+sudo service mongod start
+sudo service mongod stop
+sudo service mongod restart
+[initandlisten] waiting for connections on port 27017
+mongo/mongod is the shell
+mongo mongodb://mongodb0.example.com:28015/testdb?ssl=true
+mongo mongodb://mongodb0.example.com.local:27017,mongodb1.example.com.local:27017,mongodb2.example.com.local:27017/?replicaSet=replA
+mongo --host mongodb0.example.com:28015 [additional options]
+mongo --host mongodb0.example.com --port 28015 [additional options]
+mongo mongodb1.example.net/test
+mongo mongodb1/admin
+mongo 10.8.8.10/test
+
+
+sudo snap install --classic heroku
+sudo su - root and npm install -g create-react-app react-devtools
+sudo apt-get install openssh-server
+playonlinux: 
+sudo wget -q "http://deb.playonlinux.com/public.gpg" -O- | sudo apt-key add -
+sudo wget http://deb.playonlinux.com/playonlinux_precise.list -O /etc/apt/sources.list.d/playonlinux.list
+sudo apt-get update
+sudo apt-get install playonlinux
+run: sudo playonlinux
+
+for office using playonlinux
+sudo apt-get install winbind
+
+lightshot:
+sudo apt-get install wine
+wget http://app.prntscr.com/build/setup-lightshot.exe
+wine ./setup-lightshot.exe
+
+virtualbox:
+https://o7planning.org/en/11891/installing-virtualbox-on-ubuntu
+sudo apt-get remove virtualbox* --purge
+
+
+heroku create --buildpack https://github.com/devendraprasad1984/somePhp/tree/master/react/jsonserver
+heroku buildpacks:set https://github.com/devendraprasad1984/somePhp/tree/master/react/jsonserver
+heroku create morning-brushlands-98453
+git push heroku master
+git open
+
+/home/devendra/.bashrc - config
+alias pip=/home/devendra/deven/software/pypy3.6-v7.0.0-linux64/bin/pip3
+alias python=/home/devendra/deven/software/pypy3.6-v7.0.0-linux64/bin/pypy3
+alias acda="cd /home/devendra/anaconda3/bin/; ./anaconda-navigator"
+alias node=/home/devendra/deven/software/node-v10.15.3-linux-x64/bin/node
+alias npm=/home/devendra/deven/software/node-v10.15.3-linux-x64/bin/npm
+alias cls=clear
+alias ll="pwd; ls -ltr"
+alias bs="source /home/devendra/.bashrc"
+alias rt="sudo su - root;"
+alias ij="sh /home/devendra/deven/software/ideaIU-2018.3.4-no-jdk/idea-IU-183.5429.30/bin/idea.sh"
+alias nb="/home/devendra/deven/software/incubating-netbeans-10.0-bin/netbeans/bin/netbeans"
+alias pwt="sudo powertop --auto-tune"
+alias ijrs="sh /home/devendra/deven/software/resetIntelliJTrial.sh"
+alias studio="sh /home/devendra/deven/software/react-native/android-studio-ide-182.5314842-linux/android-studio/bin/studio.sh"
+alias gnode="cd /home/devendra/deven/software/node-v10.15.3-linux-x64/bin"
+alias src="source /home/devendra/.profile"
+alias run1="cd /home/devendra/deven/dpgit/somePhp/dpresume-react/; npm start"
+alias bld1="cd /home/devendra/deven/dpgit/somePhp/dpresume-react/; npm run build"
+alias aps="sudo service apache2 start"
+alias apst="sudo service apache2 stop"
+alias apr="sudo service apache2 restart"
+alias astat="service apache2 status"
+alias nstat="service nginx status"
+alias sp1="php -S localhost:6200 -t /home/devendra/deven/dpgit/somePhp"
+alias composer="/home/devendra/deven/software/php/PHPMailer-master/composer.phar"
+
+some js lib
+https://gojs.net/latest/samples/
+https://www.npmjs.com/package/react-wordcloud
+https://github.com/jasondavies/d3-cloud
+https://github.com/timdream/wordcloud2.js/
+https://www.npmjs.com/package/wordcloud
+
+
+postgreSQL elephant sql online free instance: https://customer.elephantsql.com/instance/	
+tornado+flask+pyramic: https://opensource.com/article/18/6/tornado-framework
+https://opensource.com/article/18/4/flask
+https://opensource.com/article/18/5/pyramid
+https://github.com/tornadoweb/tornado/tree/master/demos/blog
+https://www.tornadoweb.org/en/stable/
+
+
+url shortner: https://codeburst.io/creating-custom-url-shortener-with-nodejs-de10bbbb89c7
+
+
+pip3 install cx-oracle flask
+
+sudo apt-get install webhttrack
+http://dpz580:8080/server/index.html
+sudo apt-get install libapache2-mod-php7.2 php7.2-cli php7.2-mysql php7.2-gd php7.2-imagick php7.2-recode php7.2-tidy php7.2-xmlrpc
+local server live edit refresh: https://laragon.org/download/
+
+sudo apt autoremove
+sudo apt remove php-xdebug
+sudo apt-get install php-xdebug: .../php-xdebug_2.6.0-0ubuntu1_amd64.deb
+sudo a2enmod actions
+sudo a2dismod php5
+configure apache php to run as cgi - /etc/apache2/sites-enabled/
+apache2 -version
+edit docroot: /etc/apache2
+	nano apache2.conf
+	update  Options Indexes FollowSymLinks Includes ExecCGI in <directtory /> tag
+	/sites-available
+	nano 000-default.conf
+	change DocumentRoot /path/to/my/project
+/var/www/html
+<Directory /var/www/>
+	Options Indexes FollowSymLinks MultiViews
+	AllowOverride None
+	Order allow,deny
+	allow from all
+
+	AddHandler cgi-handler .php
+	Action cgi-handler /local-bin/php-cgi
+</Directory>
+ScriptAlias /local-bin /usr/bin
+sudo service apache2 restart
+service apache2 status
+sudo apt-get install php5-cgi libapache2-mod-php5
+sudo a2enmod php5-cgi
+sudo service apache2 restart
+php -m
+php --version
+sudo a2enmod php5-cgi
+sudo service apache2 restart
+
+mongodb:
+https://hevodata.com/blog/install-mongodb-on-ubuntu/
+ sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 7F0CEB10
+ echo "deb http://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/3.4 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-3.4.list
+ sudo apt-get update
+ sudo apt-get install -y mongodb-org
+ 	echo "mongodb-org hold" | sudo dpkg --set-selections
+	echo "mongodb-org-server hold" | sudo dpkg --set-selections
+	echo "mongodb-org-shell hold" | sudo dpkg --set-selections
+	echo "mongodb-org-mongos hold" | sudo dpkg --set-selections
+	echo "mongodb-org-tools hold" | sudo dpkg --set-selections
+ sudo apt-get install -y mongodb-org=3.4 mongodb-org-server=3.4 mongodb-org-shell=3.4 mongodb-org-mongos=3.4 mongodb-org-tools=3.4
+ sudo vim /etc/systemd/system/mongodb.service
+ Copy the following contents in the file.
+		 #Unit contains the dependencies to be satisfied before the service is started.
+		[Unit]
+		Description=MongoDB Database
+		After=network.target
+		Documentation=https://docs.mongodb.org/manual
+		# Service tells systemd, how the service should be started.
+		# Key `User` specifies that the server will run under the mongodb user and
+		# `ExecStart` defines the startup command for MongoDB server.
+		[Service]
+		User=mongodb
+		Group=mongodb
+		ExecStart=/usr/bin/mongod --quiet --config /etc/mongod.conf
+		# Install tells systemd when the service should be automatically started.
+		# `multi-user.target` means the server will be automatically started during boot.
+		[Install]
+		WantedBy=multi-user.target
+systemctl daemon-reload
+sudo systemctl start mongodb
+sudo service mongod start
+Check if mongodb has been started on port 27017 with netstat command:
+netstat -plntu
+sudo systemctl status mongodb
+sudo systemctl enable mongodb
+sudo systemctl stop mongodb
+sudo systemctl restart mongodb
+Open MongoDB shell on your server by typing below command: mongo
+switch db: use admin
+Create the root user: db.createUser({user:"admin", pwd:”password", roles:[{role:"root", db:"admin"}]})
+Connect MongoDB: mongo -u admin -p admin123 --authenticationDatabase admin
+Show dbs
+Remove packages
+sudo apt-get purge mongodb-org*
+sudo rm -r /var/log/mongodb
+sudo rm -r /var/lib/mongodb
+Package Name	Description
+mongodb-org	A metapackage that will automatically install the four component packages listed below.
+mongodb-org-server	Contains the mongod daemon, associated init script, and a configuration file (/etc/mongod.conf). You can use the initialization script to start mongod with the configuration file. For details, see Run MongoDB Community Edition.
+mongodb-org-mongos	Contains the mongos daemon.
+mongodb-org-shell	Contains the mongo shell.
+mongodb-org-tools	Contains the following MongoDB tools: mongoimport bsondump, mongodump, mongoexport, mongofiles, mongorestore, mongostat, and mongotop.
+
+
+
+
+
+sudo apt-get --purge remove bluefish
+for aptana
+sudo su - root->rbs1984#
+add-apt-repository ppa:webupd8team/java
+apt-get update
+apt-get install oracle-java7-installer
+apt-get install libjpeg62 libwebkitgtk-1.0-0 git-core
+wget https://github.com/aptana/studio3/releases/download/v3.6.1/Aptana_Studio_3_Setup_Linux_x86_64_3.6.1.zip or download manually
+unzip Aptana_Studio_3_Setup_Linux_x86_64_3.6.1.zip
+sudo apt-get install php-xdebug
+open cd /etc/php/7.2/mods-available/xdebug.ini
+
+xdebug: https://xdebug.org/download.php
+https://www.jetbrains.com/help/phpstorm/configuring-php-development-environment.html#installPHP
+
+sudo apt-get install php-xdebug: 2.6.0-0ubuntu1
+gedit /etc/php/7.2/apache2/php.ini
+gedit /etc/php/7.2/cli/php.ini
+[Xdebug]
+#zend_extension="/home/devendra/deven/dpgit/somePhp/php_xdebug-2.6.0-7.2-vc15-x86_64.dll"
+zend_extension="/usr/lib/php/20170718/xdebug.so"
+xdebug.remote_enable=1
+xdebug.remote_port="9000"
+
+sudo apt-get remove xubuntu-desktop xfce4-goodies xfce4
+sudo apt autoremove
+
+https://www.ubuntupit.com/best-linux-desktop-environment-reviewed-and-compared/
+https://www.ubuntupit.com/top-15-best-gnome-shell-themes-gnome-desktop/
+Extract the zip file to the themes directory, i.e., /usr/share/themes/or ~/.themes/
+https://github.com/vinceliuice/Sierra-gtk-theme
+
+ubuntu themes: https://www.youtube.com/watch?v=IEzrs1ZU4R0
+http://gnome-look.org
+https://www.opendesktop.org/
+
+https://github.com/aptana/studio3/releases
+http://www.zend.com/en/products/studio/downloads-studio#Linux
+
+<script>alert('test')</script>
+website page insights: https://developers.google.com/speed/pagespeed/insights/?url=http%3A%2F%2Fksgurukul.in%2F&tab=mobile
+https://wordpress.org/plugins/wp-super-cache/
+https://www.shoutmeloud.com/wp-super-cache-wordpress-optimization-plugin.html
+https://wordpress.org/plugins/wp-smushit/
+https://imagekit.io/blog/lazy-loading-images-complete-guide/
+https://github.com/spatie/image-optimizer
+https://cloudinary.com/blog/image_optimization_in_php
+https://tinypng.com/developers/reference/php
+https://laravelcode.com/post/image-optimization-in-laravel-with-spatie
+
+https://www.sitepoint.com/8-practices-to-secure-your-web-app/
+
+design pattern: https://sourcemaking.com/design_patterns
+https://www.toptal.com/python/an-introduction-to-mocking-in-python
+https://www.toptal.com/python/python-design-patterns
+https://www.tutorialspoint.com/python_design_patterns/index.htm
+https://www.edureka.co/blog/interview-questions/python-interview-questions/
+https://intellipaat.com/interview-question/python-interview-questions/
+https://www.educba.com/python-interview-questions/
+
+
+https://ihatetomatoes.net/get-advanced-react-workshop/
+https://itnext.io/how-to-develop-a-professional-react-app-c259382372cb
+
+http://interactivepython.org/runestone/static/pythonds/index.html
+https://github.com/charulagrl/data-structures-and-algorithms
+https://www.geeksforgeeks.org/advanced-data-structures/
+https://data-flair.training/blogs/top-python-interview-questions-answer/
+https://www.cs.auckland.ac.nz/courses/compsci105s1c/resources/ProblemSolvingwithAlgorithmsandDataStructures.pdf
+
+mailspring login: devendraprasad1984@gmail.com->rbs6200#
+
+10-Dec-2018 (10-Dec-2018)	TO TRANSFER 
+INB IMPS/P2A/834417971151/XXXXXXX364CORP	UA0120011954MOAAXRADE8	49,900.00	
+SHEI20
+
+machine learning
+https://github.com/josephmisiti/awesome-machine-learning/blob/master/books.md
+https://nbviewer.jupyter.org/github/rasbt/python-machine-learning-book/blob/master/code/ch02/ch02.ipynb
+
+
+express: https://www.youtube.com/watch?v=Dm5BmG82LEI
+spa:https://github.com/toufiqElahy/SPA-In-2-Minutes
+react native: https://www.youtube.com/watch?v=whZNYPldMEY
+https://www.youtube.com/watch?v=7Ot5LSGHLyY
+https://www.youtube.com/watch?v=0FMFklHcJ_E&list=PL8p2I9GklV44z6euF3nqS0TlKbaGiFUGO
+https://facebook.github.io/react-native/docs/getting-started.html
+Simulator not installed. Please visit https://developer.apple.com/xcode/download/ to download Xcode and the iOS simulator. 
+If you already have the latest version of Xcode installed, you may have to run the command `sudo xcode-select -s /Applications/Xcode.app`.
+
+udemy downloader:
+https://stackoverflow.com/questions/41931230/how-to-download-udemy-videos
+open cmd prompt
+type in there pip install youtube-dl
+then after downloading youtube-dl , open your udemy account where you have subscribed for the course or in case you have bought the udemy course
+open the course which you have to download.
+click on the course content option
+copy the link in url bar copy the link in url bar
+write the python script in cmd as follows:
+cli->youtube-dl -u devendraprasad1984@gmail.com -p rbs1984# <course link>
+type your uername or registered e-mail and password
+you will appearing this in the cmd if the user name and password is correct written by you
+other video downloader from youtube also
+sudo add-apt-repository ppa:clipgrab-team/ppa
+sudo apt-get update
+sudo apt-get install clipgra
+sudo apt-get remove clipgrab
+sudo add-apt-repository --remove ppa:clipgrab-team/ppa
+sudo apt-get remove -y youtube-dl
+sudo apt install youtube-dl or sudo wget https://yt-dl.org/latest/youtube-dl -O /usr/local/bin/youtube-dl
+sudo chmod a+x /usr/local/bin/youtube-dl
+hash -r
+sudo youtube-dl -U
+
+
+
+works
+sudo apt-get remove -y youtube-dl
+sudo wget https://yt-dl.org/latest/youtube-dl -O /usr/local/bin/youtube-dl
+sudo chmod a+x /usr/local/bin/youtube-dl
+hash -r
+sudo youtube-dl -u sonicageindia@gmail.com -p rbs1984# https://www.udemy.com/full-stack-application-development-with-spring-boot-and-angular/learn/v4/content --playlist-start 91 --playlist-end 117
+sudo youtube-dl -u sonicageindia@gmail.com -p rbs1984# https://www.udemy.com/python-for-finance-and-trading-algorithms/learn/v4/overview  --playlist-start 13 --playlist-end 112
+
+sudo pip install udemy-dl
+udemy-dl course-url
+udemy-dl -u devendraprasad1984@gmail.com -p rbs1984# https://www.udemy.com/react-redux
+udemy-dl -u devendraprasad1984@gmail.com -p rbs1984# --lecture-start 1 --lecture-end 2 https://www.udemy.com/react-redux/learn/v4/t/lecture/12531044
+udemy-dl -u sonicageindia@gmail.com -p rbs1984# https://www.udemy.com/full-stack-application-development-with-spring-boot-and-angular
+sudo udemy-dl -u sonicageindia@gmail.com -p rbs1984# https://www.udemy.com/full-stack-application-development-with-spring-boot-and-angular/learn/v4/content  --lecture-start 91 --lecture-end 117 
+
+sudo udemy-dl -u sonicageindia@gmail.com -p rbs1984# https://www.udemy.com/python-for-finance-and-trading-algorithms/learn/v4/overview
+
+npm install -g udemy-dl
+udl https://www.udemy.com/COURSE_NAME
+udl -u devendraprasad1984@gmail.com -p rbs1984# https://www.udemy.com/react-redux
+udl -u devendraprasad1984@gmail.com -p rbs1984# https://www.udemy.com/the-complete-react-native-and-redux-course
+udl -u sonicageindia@gmail.com -p rbs1984# https://www.udemy.com/full-stack-application-development-with-spring-boot-and-angular
+udl -u sonicageindia@gmail.com -p rbs1984# https://www.udemy.com/full-stack-application-development-with-spring-boot-and-angular/learn/v4/t/lecture/12537130?start=16
+
+https://sites.google.com/view/dpresume
+
+codility practice Qs: https://app.codility.com/programmers/lessons
+solutions to all practice problem: https://codesays.com/solutions-to-training-by-codility/
+
+https://code.google.com/codejam/past-contests
+
+https://app.codility.com/demo/results/trainingWSMPKQ-CVH/
+
+
+lets connect, i am totally fresh in freelancing, can work more dedicated, I am a fullstack senior Developer
+
+https://www.youtube.com/watch?v=G6iYmLMZ1ns&list=PL1BVonut8CRNtshuiEZPuEdtKgxy0O0Qw
+kris wright demo on dynamic prog and algo
+
+Mahavir Enclave Part 1 - RZD3/83, Flat 101 - IN-DL18352377865746M
+myIP address: 112.196.133.234, 112.196.133.37
+
+
+I am interested in this profile, pfa my profile and also find it on web
+would you go through it and if found suitable, lets connect
+http://dpresume.com
+https://github.com/devendraprasad1984/PythonAndNodeSamples
+https://www.linkedin.com/in/devendraprasad/
+
+Google
+ExcelGuru
+Account Id: 35370795
+Tracking Id: UA-35370795-1
+http://sites.google.com/site/devendraprasad1984
+
+VBAGalaxy: UA-35370795-2, http://sonicageindia.com, Adsense Prop: pub-2750760224895811 AdSense for Content
+Adwords Account: 221-377-9816
+into every page
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-35370795-2', 'auto');
+  ga('send', 'pageview');
+</script>
+
+Create a PHP file named "analyticstracking.php" with the code above and include it on each PHP template page. Then, add the following line to each template page immediately after the opening <body> tag:
+<?php include_once("analyticstracking.php") ?>
+
+
+id_rsa_dp->rbs1984#
+Your identification has been saved in /home/devenpanel/.ssh/id_rsa_dp.
+Your public key has been saved in /home/devenp
+
+python checks over dpresume.com virtal server
+ls -la /usr/bin/python
+Python -V
+wget https://www.python.org/ftp/python/3.4.3/Python-3.4.3.tgz
+tar xvzf Python-3.4.3.tgz
+cd Python-3.4.3
+./configure --prefix=$HOME/.local
+make
+make install
+cd $home
+vi .bash_profile
+
+alias dl="ls -ltrh; pwd;"
+alias dp="cd /home/devenpanel/dpsoft/"
+PATH=$PATH
+export PATH="$HOME/bin .local/bin :$PATH"
+export PATH="/home/devenpanel/dpsoft/mongo349/bin:$PATH"
+
+
+source ~/.bash_profile
+
+python3 -m pip install virtualenv
+python -m pip install –user virtualenv
+
+python3 -m pip install --upgrade pip
+python3 -m pip install pymongo
+python3 -m pip install django
+python3 -m pip install flask
+python3 -m pip install boto3
+python3 -m pip install mysql
+
+mkdir PythonTest
+cd PythonTest
+virtualenv PythonTest
+source PythonTest/bin/activate
+
+Mongo Install
+curl -O https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-3.4.9.tgz
+tar -zxvf mongodb-linux-x86_64-3.4.9.tgz
+export PATH=<mongodb-install-directory>/bin:$PATH
+mkdir -p /data/db
+
+mongod --dbpath <path to data directory>
+mongod --config=/home/devenpanel/dpsoft/mongodata/mongo1.conf
+
+create database mydb
+use mydb
+mongoimport --db mydb --collection zips --drop --file /home/devenpanel/dpsoft/mongodata/zips.json
+mongoimport --db mydb --collection companies --drop --file /home/devenpanel/dpsoft/mongodata/companies.json
+mongoimport --db mydb --collection enron --drop --file /home/devenpanel/dpsoft/mongodata/enron.json
+mongoimport --db mydb --collection stocks --drop --file /home/devenpanel/dpsoft/mongodata/stocks.json
+mongoimport --db mydb --collection world_bank --drop --file /home/devenpanel/dpsoft/mongodata/world_bank.json
+
+
+curl -sL https://raw.githubusercontent.com/creationix/nvm/v0.31.0/install.sh -o install_nvm.sh
+nvm install 6.0.0
+npm install -g gulp
+npm install -g bower
+npm install -g karma
+npm install -g http-server
+
+
+
+
+
+
+ftp.sonicageindia.co.in,sonicageindia, ehz79xa5
+PUT F:\VBProjects\newSonicPOS\WEBDir\SaleReport_12-Aug-14.xml /www/SonicWebR/TESTPOS/KarolBagh/SaleReport_12-Aug-14.xml
+
+
+WAMP
+--------------
+root/mysql-> admin
+mysql: root@localhost->admin, test
+host: db4free.net:3306, database: wecom, wecom, rbs1984#, devendraprasad1984@gmail.com
+bitnami wamp:root password: admin1234
+maria db local
+pwd: admin
+service:mariadb->3306
+
+
+
+Hi
+I have made restaurant POS software which work on desktop and can make the sales available over email and web
+https://www.dropbox.com/s/booot21zqzjaasj/SonicAgeIndia-POS.mp4?dl=0
+
+Plz forward this message to the restaurants that may need it
+
+rgds,
+dev
+
+
+
+
+Default SSID: D-Link_DIR-600M
+SSID Name: devenWifi
+default username: Admin, pwd:<blank>
+web port: 6200
+WPA2-PSK(AES): 2239582797772
+
+
+Building Expenses
+https://docs.google.com/spreadsheets/d/1Ri__apXD3tw_gpBTb2iq1Wt2NZty-frF1J7B0kQCXnE/pubhtml
+https://docs.google.com/spreadsheets/d/1Ri__apXD3tw_gpBTb2iq1Wt2NZty-frF1J7B0kQCXnE/edit?usp=sharing
+dropbox docs: https://www.dropbox.com/sh/5ziw1415h3bumlb/AAAqmPwMphr8o_CmYYe7HYbVa?dl=0
+
+
+AWS
+==================
+Instance: i-291714ed
+Public IP: 54.213.81.190
+Private IP: 172.31.31.95 (ip-172-31-31-95.us-west-2.compute.internal)
+NS: win-r1tnaqrh289.
+User name: Administrator
+Password: ;D3mabHFD6k
+ComputerName: WIN-R1TNAQRH289
+
+myIp: 112.196.177.24, 112.196.172.132 
+wamp mysql: c:/wamp/bin/mysql/mysql5.6.17/data
+use credential to connect to my sql on AWS server:
+dmon [54.213.167.147]:3306->dmon->dmonadmin (try blank password as well)
+test [54.213.167.147]:3306->root->dmonadmin
+dmon->dmonadmin
+root->dmonadmin
+
+need to set windows firewall off and allow connection to all http and tcp connection
+
+http://54.213.81.190/dmonrestapi/sonicageindia/rating.txt
+http://54.213.81.190/sonicageindia.co.in
+http://54.213.81.190/dmonservices.com
+http://54.213.81.190/dmonrestapi
+http://54.213.81.190/phpmyadmin/
+\\WIN-R1TNAQRH289\dmonNode
+\\WIN-R1TNAQRH289\www
+
+
+phpMyAdmin: to make it public-make sure you goto c:\wamp\www\alias dir and change all ini files to "Allow from all" and remove other specific ip line
+and comment "#Require local"
+httpd.conf
+<Directory "c:/wamp/www/">
+    Options Indexes FollowSymLinks MultiViews
+    AllowOverride all
+    Require all granted
+</Directory>
+UPDATE mysql.user SET Password=PASSWORD('NewPasswordHere') WHERE User='root';
+GRANT ALL PRIVILEGES ON *.* TO 'root'@'localhost';
+FLUSH PRIVILEGES;
+
+Node gets you json object for database object easily and use angular to play with it easily
+Node: download and install it
+cd C:\node\node_modules\npm
+cmd->npm install/unistall mysql
+npm install simple-node-logger
+npm install/unistallmd
+mssql
+
+
+git clone git://github.com/boto/boto.git
+cd boto
+python setup.py install
+
+git clone https://github.com/boto/boto3.git
+cd boto3
+
+pip install Sphinx
+npm install -g heroku-cli
+
+
+
+
+global npm dir
+npm install -g <module>: use it if you want any node module to work globally i.e via the CLI like gulp, grunt, karma, mocha, bower etc. These modules cannot be imported by require() in node js file
+dont use -g if you want to leverage the module in js script like express and react js api
+
+C:\Users\DP\AppData\Roaming\npm
+
+cd C:\node\node_modules\npm
+gulp installation has to be in the local root directory of web server
+npm install gulp -g
+npm install --save-dev gulp gulp-jshint gulp-sass gulp-concat gulp-uglify gulp-rename
+from with in project to have gulp build setup
+npm install gulp --save-dev gulp-jshint gulp-sass gulp-concat gulp-uglify gulp-rename gulp-uglifycss gulp-minify-html
+npm install --save gulp-uglifycss
+npm install --save gulp-minify-html
+
+cd to your folder directory
+java -jar c:\yuiCompress.jar js/myjs.js -o dist/js/myjs1.js
+java -jar c:\yuiCompress.jar js/*.js -o dist/js/all.js
+java -jar c:\yuiCompress.jar css/*.css -o dist/css/all.css
+
+
+
+node f:\dmon\node\mysql.js
+node f:\dmon\node\httpServer.js
+node f:\dmon\node\tcpServer.js
+
+==========================================================================================================================
+
+
+
+
+sql Server 2005
+SYSTEM->rbs1984#->NT AUTHORITY
+C:\Program Files\Microsoft SQL Server\
+Database Engine: NT Service\MSSQL$SQLEXPRESS
+Server: IDEA-PC\SQLEXPRESS
+windows auth mode: idea-PC\DP (DP)
+C:\Program Files\Microsoft SQL Server\MSSQL11.SQLEXPRESS\MSSQL\Data
+
+SMS APIs
+---------------
+AirtelSMS.com
+http://yourdomainname.com/GatewayAPI/rest?method=SendMessage&send_to=9582797772&msg_type=TEXT&mask=ARCELI&loginid=xxxx&auth_scheme=plain&password=123456&v=1.1&format=text&msg=G(T0):12292 (T1): 12827 S(T0):35556 (T1):35590 P(T0):65 (T1):65.01 dmonTest
+
+
+dmonAdm!n:999983
+8123h123u1273:10
+3kjasdu98342:10
+kskkjlkjl33w:10
+
+
+I have a new unique business idea and want to contact investors. HELP/GUIDE@devendraprasad1984@gmail.com, +91 958279777
+
+Hi,I have designed a new unique service IDEA. Please use below code@ dmonServices.com/demo
+code: 8123h123u1273, 3kjasdu98342
+
+
+============================================
+Hi,
+I am Deven, a Senior Software Designer, with one of the leading investment bank in Delhi-NCR. I have designed an idea (dmonServices.com) which would work for everyone in the country and it would be beneficial for everyone. If people would feel having money saved with the help of dmonServices, they would stay connected with us forever. This would work without internet as well and would have more connected people for varied society of india, from elite to poor. please view demo
+
+Please use below code to have the demo view: 8123h123u1273, 3kjasdu98342, kskkjlkjl33w
+Type the above code in the text box on http://dmonServices.com/demo and click on "Demo View". You will get 10 views with each code. If you need more views of the idea, Please call me or mail me, I will renew it.
+
+Would you call me to discuss in detail if you like the video and can get me a funding to make demon a real success in INDIA
+Rgds,
+Deven
++91 9582797772
+
+dmonServices.com - concise idea
+capture the commodity rates from various sources and provide to everyone via sms. help sources to talk to each other for better society. help people to know the changing rates pattern and thus help the economy aware of the changing rate patterns regularly
+==========================================
+total of 9 yrs of IT development experience, I now want to solve agriculture problem and help economy
+https://letsventure.com/dmonservices
+
+
+
+create a windows service as bat file - for node
+open CMD as administrator
+sc.exe create testNodeService binpath= "c:\windows\system32\cmd.exe --service \"F:\dmon\node\testNode.bat\"" DisplayName= "testNodeService" start= "auto"
+sc.exe delete intelliServer1
+
+sc.exe create intelliServer2 binpath= "c:\windows\system32\cmd.exe \"F:\SETUP\JAVA\LicenceServer(1.3)_intelliJ\IntelliJIDEALicenseServer_windows_386.exe\"" DisplayName= "intelliServer2" 
+
+
+visual studio 2010 express key
+PQT8W-68YB2-MPY6C-9JV9X-42WJV
+
+
+
+excel classess
+------------------
+abhinav: 8860413106
+jatin: 9953148777
+vikrant: 995399971
+
+
+
+
+
+Hi,
+I am working professional with one of the investment banks in gurgaon and I work on advance excel+vba. I have got +9 yrs experience of software development in this technology. I am free over weekends and thinking to start coaching over weekends on part time basis. Should you have any training needs in these technologies, please contact me. PFB the resume
+
+
+http://goo.gl/forms/rYzDnwCthw
+
+
+
+<a class="twitter-timeline" href="https://twitter.com/hashtag/StartupIndia" data-widget-id="688612655385329664">#StartupIndia Tweets</a>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+
+<a class="twitter-timeline" href="https://twitter.com/devendraprasad1" data-widget-id="688616049659392000">Tweets by @devendraprasad1</a>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+
+
+<a class="twitter-timeline" href="https://twitter.com/dmonservices" data-widget-id="688647479928041473">Tweets by @dmonservices</a>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+
+
+
+want to be part of overall journey with Uber and this space can utilize my skills which I leaned out of hobby (JS/Jquery/Angular/Node/Php). I work for RBS and I work on Advance Excel+VBA+Sql projects, this have limited set of growth in overall journey. I hope, I become an asset to Uber
+
+
+
+Freelancer.com
+------------------------------
+I am experienced VBA programmer. Have a look over my profile at sonicageindia.co.in
+I have over 8 yrs of wide experience in the same IT development field. I can code and troubleshoot at very fast speed
+Rgds
+
+
+
+
+HotelSunNSnow.com
+-----------------------
+net4.in->000685625->majesticview2012(old)->dp2016hsnscom
+Rahul Gupta - 8126417222
+
+
+
+1yrs
+-----------------
+web hosting - 116*12 = 1392
+email: 183*12 = 2184
+total: 3600
+-----------------
+Initial Cost + onboarding cost: 3000
+Annual Maintenance Contract (AMC): 9600
+
+OverAll Tasks Involved + AMC (for HotelSunNSnow)
+--------------------------
+- get hold of the running website (without access)
+- write the email sender from scratch because cracking it from public source hides the secured and invisible codes
+	email will be sent to newly configured mail or gmail whichever possible
+- hosting the website to new host and manage the traffic route to this domain
+- google ad words management - finding possibilities for getting hold of the google account for ad window
+	google account for ad is not in my control and hence cannot decide on cost at the momment, will update later
+
+AMC
+would cover changes or amendment to existing components (text, images, links, slider, contacts) present over the website.
+The cost for anything / any new design required in the website will be decide at the time of request
+
+
+
+Total: 3600 + 3000 + 9600 = 16200
+
+
+
+dmon ec2 aws server
+54.200.248.237->;D3mabHFD6k
+
+
+
+
+Angular-----------
+Default application server configuration
+var PORT             = 5555;
+var LIVE_RELOAD_PORT = 4002;
+var APP_BASE         = '/';
+Configure at runtime
+
+npm run serve.dev -- --port 8080 --reload-port 4000 --base /my-app/
+Now to extend?
+
+If you want to use your custom libraries:
+npm install my-library --save
+vim gulpfile.js
+Add reference to the installed library in PATH.src.lib into ./tools/workflow.config.js.
+
+Running test
+# In a single bash window
+npm run test
+# Debug - In two bash windows
+npm run karma      # 1st window
+npm run test.dev   # 2nd window
+
+
+
+These samples use Angular 2.0
+
+Live DEMO here: http://www.syntaxsuccess.com/angular-2-samples
+Documentation: http://www.syntaxsuccess.com/angular-2-articles
+
+Here are the prerequisites for running the project:
+
+1) npm run install-application 
+   
+   -Installs all dependencies 
+   -AOT compiles
+   -Tree shakes 
+   -Bundles app into single file
+
+2) npm run start
+
+
+
+lite-server dev server
+Installation and Usage
+
+The recommended installation method is a local NPM install for your project:
+
+$ npm install lite-server --save-dev
+...and add a "script" entry within your project's package.json file:
+
+# Inside package.json...
+  "scripts": {    
+    "dev": "lite-server"
+  },
+With the above script entry, you can then start lite-server via:
+
+$ npm run dev
+Other options for running locally installed NPM binaries is discussed in this Stack Overflow question: How to use package installed locally in node_modules
+
+Global Installation
+
+lite-server can be also installed globally, if preferred:
+
+$ npm install -g lite-server
+
+# To run:
+$ lite-server
+Custom Configuration
+
+The default behavior serves from the current folder, opens a browser, and applies a HTML5 route fallback to ./index.html.
+
+lite-server uses BrowserSync, and allows for configuration overrides via a local bs-config.json or bs-config.js file in your project.
+
+You can provide custom path to your config file via -c or --config= run time options:
+
+lite-server -c configs/my-bs-config.js
+For example, to change the server port, watched file paths, and base directory for your project, create a bs-config.json in your project's folder:
+
+{
+  "port": 8000,
+  "files": ["./src/**/*.{html,htm,css,js}"],
+  "server": { "baseDir": "./src" }
+}
+A more complicated example with modifications to the server middleware can be done with a bs-config.js file, which requires the module.exports = { ... }; syntax:
+
+module.exports = {
+  server: {
+    middleware: {
+      // overrides the second middleware default with new settings
+      1: require('connect-history-api-fallback')({index: '/index.html', verbose: true})
+    }
+  }
+};
+The bs-config.js file may also export a function that receives the lite-server Browsersync instance as its only argument. While not required, the return value of this function will be used to extend the default lite-server configuration.
+
+module.exports = function(bs) {
+
+  return {
+    server: {
+      middleware: {
+        // overrides the second middleware default with new settings
+        1: require('connect-history-api-fallback')({
+          index: '/index.html',
+          verbose: true
+        })
+      }
+    }
+  };
+
+};
+NOTE: Keep in mind that when using middleware overrides the specific middleware module must be installed in your project. For the above example, you'll need to do:
+
+$ npm install connect-history-api-fallback --save-dev
+...otherwise you'll get an error similar to:
+
+Error: Cannot find module 'connect-history-api-fallback'
+Another example: To remove one of the default middlewares, such as connect-logger, you can set it's array index to null:
+
+module.exports = {
+  server: {
+    middleware: {      
+      0: null     // removes default `connect-logger` middleware
+    }
+  }
+};
+A list of the entire set of BrowserSync options can be found in its docs: http://www.browsersync.io/docs/options/
+
+Testing
+
+When using lite-server to run end to end tests, we may not want to log verbosely. We may also want to prevent the browser from opening. These options in the bs-config.js will silence all logging from lite-server:
+
+  open: false
+  logLevel: "silent",
+  server: {
+    middleware: {
+      0: null
+    }
+  }
+Known Issues
+
+CSS with Angular 2 is embedded thus even though BrowserSync detects the file change to CSS, it does not inject the file via sockets. As a workaround, injectChanges defaults to false.
+
+Contributing
+
+Fork and clone it
+Install dependencies: npm install
+Create a feature branch: git checkout -b new-feature
+Commit changes: git commit -am 'Added a feature'
+Run static code analysis and unit tests: npm test
+Push to the remote branch: git push origin new-feature
+Create a new Pull Request
+
+
+
+
+configure Dropbox to run as a service.
+
+Log into the server or desktop with the account that you want to run the service as and setup Dropbox. Configure Dropbox to not run at startup and exit the application.
+Download srvany.exe from Microsoft Windows 2003 Resource Kit (available free from Microsoft). After installing the Resource Kit (default in C:\Program Files (x86)\Windows Resource Kits\Tools) copy srvany.exe into the folder where Dropbox is installed.
+Open a windows cmd prompt (run as administrator) and type in the service and authentication details you want (in our case DropboxSync) i.e. sc create DropboxSync displayName= "Dropbox Service" start= auto obj= "<domain>\<username>" password= "<password>" binPath= "C:\Program Files (x86)\Dropbox\srvany.exe"
+Goto your Start Menu, type in regedit and goto the new service (in this case DropboxSync) HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\DropboxSync
+Create subkey Parameters below in which you must create a string value: Create a String Value called Application then right click on this and add the path to Dropbox.exe (e.g C:\Program Files (x86)\Dropbox\Client\Dropbox.exe)
+From the command prompt run net start DropboxSync or start the service via the services snap-in
+You can then manage Dropbox as a service. If you need to edit the settings within Dropbox log in as the account that the service is running under, stop the service then start Dropbox from the icon in the start menu. When you have completed the changes to the settings close the google drive desktop application and start the service back up again.
+
+sc create DropboxSync displayName= "Dropbox Service" start= auto obj= "devendraprasad1984@gmail.com" password= "rbs1984#" binPath= "C:\Program Files (x86)\Dropbox\srvany.exe"
+
+
+
+
+Big Data ReadMe
+Twitter sentiments analysis (steps)
+https://docs.microsoft.com/nl-nl/azure/stream-analytics/stream-analytics-twitter-sentiment-analysis-trends
+ 
+ 
+ 
+Demo for Running Hadoop Cluster & Map Reduce Job
+http://www.rajatratewal.com/2014/07/25/hadoop-tutorial-series-1-installing-hadoop-windows-ubuntu/
+Demo for Installing Pig and Running Pig Scripts
+http://www.rajatratewal.com/2014/09/12/hadoop-tutorial-series-1-installing-pig/
+http://www.rajatratewal.com/2014/11/12/dive-pig-latin-via-demo-use-case/
+Demo for Hive
+http://www.rajatratewal.com/2014/09/16/hadoop-tutorial-series-1-installing-hive/
+Demo for Sqoop
+http://www.rajatratewal.com/2016/07/14/sqoop-transferring-relationa-data/
+Demo for Oozie workflow
+http://www.rajatratewal.com/2014/09/15/hadoop-tutorial-series-1-installing-oozie-workflow-scheduler-hadoop/
+ 
+ 
+Buzz word Big Data
+http://www.rajatratewal.com/2014/10/01/buzz-word-big-data/
+ 
+Yahoo Tutorial
+https://developer.yahoo.com/hadoop/tutorial/
+ 
+pdf: Hadoop in action
+ 
+ 
+Must Have
+Udemy Hadoop Course
+https://www.udemy.com/hadoopstarterkit/
+ 
+Setup a Hadoop Cluser on Azure
+http://hortonworks.com/hadoop-tutorial/deploying-hortonworks-sandbox-on-microsoft-azure/
+ 
+Sentiment Analysis
+http://hortonworks.com/hadoop-tutorial/how-to-refine-and-visualize-sentiment-data/
+ 
+ 
+Any one as per your skill set and area of expertise
+Map-R (Analyst)
+http://learn.mapr.com/da-440-apache-hive-essentials
+http://learn.mapr.com/da-450-apache-pig-essentials
+ 
+Map-R (Developer)
+http://learn.mapr.com/dev-301-developing-hadoop-applications
+ 
+Map-R (Database)
+http://learn.mapr.com/dev-320-hbase-data-model-and-architecture
+http://learn.mapr.com/dev-325-hbase-schema-design
+http://learn.mapr.com/da-440-apache-hive-essentials
+ 
+Various Practical Use Cases to help you with Hackathon
+http://hortonworks.com/tutorials/
+
+
+Social media analysis using python � google python social media api
+https://www.analyticsvidhya.com/blog/2014/09/mining-youtube-python-social-media-analysis/
+ 
+ 
+
+ 
+citi ref: 7274
+remaining: 29522.68
+
+node watcher: npm install -g nodemon
+
+
+heroku 
+git clone https://github.com/heroku/node-js-getting-started.git
+https://limitless-sea-34608.herokuapp.com/ | https://git.heroku.com/limitless-sea-34608.git
+heroku.exe login
+heroku.exe create
+git push heroku master
+heroku.exe ps:scale web=1
+heroku.exe open
+heroku.exe logs --tail
+
+npm install --save --save-exact cool-ascii-faces
+heroku.exe local web
+
+
+https://limitless-sea-34608.herokuapp.com/
+
+git config --global user.email "devendraprasad1984@gmail.com"
+git config --global user.name "devendraprasad1984"
+
+git clone git@github.com:devendraprasad1984/test1.git
+git clone https://github.com/devendraprasad1984/test1.git
+
+https://github.com/devendraprasad1984/PythonAndNodeSamples.git
+echo "# test1" >> README.md
+git init
+git add README.md
+git commit -m "first commit"
+git remote add origin https://github.com/devendraprasad1984/test1.git
+git remote add origin https://github.com/devendraprasad1984/test2.git
+git push --set-upstream origin master
+git push -u origin master
+
+heroku.exe login
+heroku.exe create
+https://murmuring-tundra-42584.herokuapp.com/ | https://git.heroku.com/murmuring-tundra-42584.git
+git remote -v
+heroku.exe git:remote -a murmuring-tundra-42584
+--git remote rename heroku heroku-staging
+git push heroku master
+heroku.exe ps:scale web=1
+heroku.exe open
+
+git remote add origin https://github.com/devendraprasad1984/test1.git
+git remote add origin https://github.com/devendraprasad1984/test2.git
+git push -u origin master
+
+git clone https://github.com/ccoenraets/directory-react-nodejs.git
+git clone git@github.com:devendraprasad1984/test3.git
+git remote add origin https://github.com/devendraprasad1984/test3.git
+
+Creating app... done, mysterious-inlet-67999
+https://mysterious-inlet-67999.herokuapp.com/ | https://git.heroku.com/mysterious-inlet-67999.git
+heroku.exe git:remote -a mysterious-inlet-67999
+
+
+
+RUBY
+ruby+devkit: https://rubyinstaller.org/downloads/
+rubyGems+rails: https://rubygems.org/pages/download
+mysql: dev.mysql.com
+mySqlRubeGems: 
+
+https://www.youtube.com/watch?v=HRqacHVmePU&list=PLgPJX9sVy92yV7Qt6_8ElC9paGWdtdIbb&index=3
+
+
+
+
+
+
+
+DP: i can be a match as well to the project, dpresume[dot]com
+
+
+
+sublime c & CPP setting
+for c
+{
+"shell_cmd" : "gcc $file_name -o ${file_base_name}",
+"working_dir" : "$file_path",
+ 
+"variants":
+[
+    {
+        "name": "Run",
+        "shell_cmd": "gcc $file_name -o ${file_base_name} && ${file_path}/${file_base_name}"
+    }
+]
+}
+
+
+for c++
+{
+"shell_cmd": "g++ \"${file}\" -o \"${file_path}/${file_base_name}\"",
+"file_regex": "^(..[^:]*):([0-9]+):?([0-9]+)?:? (.*)$",
+"working_dir": "${file_path}",
+"selector": "source.c, source.c++",
+ 
+"variants":
+[
+    {
+        "name": "Run",
+        "shell_cmd": "g++ \"${file}\" -o \"${file_path}/${file_base_name}\" && \"${file_path}/${file_base_name}\""
+    }
+]
+}
+
+
+
+
+
+
+oracle:
+c:\ora\product\11.1.0\db_2
+jdbc:oracle:thin:@192.168.0.11:1521:master
+https://192.168.0.11:5500/em->system->admin
+all other DB like HR,MDDATA etc->amdmin
+globaldb->sid->master
+192.168.0.11:1521->SYSTEM->admin->master
+https://askubuntu.com/questions/566734/how-to-install-oracle-11gr2-on-ubuntu-14-04
+unzip oracle-xe-11.2.0-1.0.x86_64.rpm.zip 
+sudo apt-get install alien libaio1 unixodbc
+cd Disk1/
+sudo alien --scripts -d oracle-xe-11.2.0-1.0.x86_64.rpm
+sudo pico /sbin/chkconfig
+save into a sh file
+	#!/bin/bash
+	# Oracle 11gR2 XE installer chkconfig hack for Ubuntu
+	file=/etc/init.d/oracle-xe
+	if [[ ! `tail -n1 $file | grep INIT` ]]; then
+	    echo >> $file
+	    echo '### BEGIN INIT INFO' >> $file
+	    echo '# Provides: OracleXE' >> $file
+	    echo '# Required-Start: $remote_fs $syslog' >> $file
+	    echo '# Required-Stop: $remote_fs $syslog' >> $file
+	    echo '# Default-Start: 2 3 4 5' >> $file
+	    echo '# Default-Stop: 0 1 6' >> $file
+	    echo '# Short-Description: Oracle 11g Express Edition' >> $file
+	    echo '### END INIT INFO' >> $file
+	fi
+	update-rc.d oracle-xe defaults 80 01
+sudo chmod 755 /sbin/chkconfig  
+Copy the following into the file and save:
+	sudo pico /etc/sysctl.d/60-oracle.conf
+	# Oracle 11g XE kernel parameters 
+	fs.file-max=6815744  
+	net.ipv4.ip_local_port_range=9000 65000  
+	kernel.sem=250 32000 100 128 
+	kernel.shmmax=536870912 
+sudo cat /etc/sysctl.d/60-oracle.conf 
+sudo service procps start
+sudo sysctl -q fs.file-max
+sudo pico /etc/rc2.d/S01shm_load
+Copy the following into the file and save.
+	#!/bin/sh
+	case "$1" in
+	start)
+	    mkdir /var/lock/subsys 2>/dev/null
+	    touch /var/lock/subsys/listener
+	    rm /dev/shm 2>/dev/null
+	    mkdir /dev/shm 2>/dev/null
+	*)
+	    echo error
+	    exit 1
+	    ;;
+	esac
+sudo chmod 755 /etc/rc2.d/S01shm_load
+sudo ln -s /usr/bin/awk /bin/awk 
+sudo mkdir /var/lock/subsys 
+sudo touch /var/lock/subsys/listener
+Now, Reboot Your System
+sudo dpkg --install oracle-xe_11.2.0-2_amd64.deb
+sudo /etc/init.d/oracle-xe configure 
+nano ~/.bashrc
+Add the following lines to the end of the file:
+	export ORACLE_HOME=/u01/app/oracle/product/11.2.0/xe
+	export ORACLE_SID=XE
+	export NLS_LANG=`$ORACLE_HOME/bin/nls_lang.sh`
+	export ORACLE_BASE=/u01/app/oracle
+	export LD_LIBRARY_PATH=$ORACLE_HOME/lib:$LD_LIBRARY_PATH
+	export PATH=$ORACLE_HOME/bin:$PATH
+Load the changes by executing your profile: . ~/.bashrc
+sudo service oracle-xe start
+sudo usermod -a -G dba YOURUSERNAME
+sudo service oracle-xe start
+sqlplus sys as sysdba
+create user USERNAME identified by PASSWORD;
+alter database open resetlogs;
+grant connect, resource to USERNAME;
+exit;
+sqlplus
+
+
+
+
+
+
+commands
+"C:\Program Files\Git\bin\sh.exe" --login
+tail -f /c/wamp7118/apache2/logs/error.log
+
+
+in jetbrains
+GET http://localhost/ksgurukul/services/ServiceDetails.php?test=1
+Accept: */*
+Cache-Control: no-cache
+
+
+
+
+
+
+
+
+-javaagent:/home/devendra/deven/software/jb/JetbrainsIdesCrack-3.4-release-enc.jar
+-javaagent:/home/devendra/deven/software/jb/JetbrainsCrack-3.1-release-enc.jar
+-javaagent:/home/devendra/deven/software/jb/JetbrainsCrack.jar
+
+{"licenseId":"ThisCrackLicenseId",
+"licenseeName":"Rover12421",
+"assigneeName":"Rover12421",
+"assigneeEmail":"rover12421@163.com",
+"licenseRestriction":"By Rover12421 Crack, Only Test! Please support genuine!!!",
+"checkConcurrentUse":false,
+"products":[
+{"code":"II","paidUpTo":"2099-12-31"},
+{"code":"DM","paidUpTo":"2099-12-31"},
+{"code":"AC","paidUpTo":"2099-12-31"},
+{"code":"RS0","paidUpTo":"2099-12-31"},
+{"code":"WS","paidUpTo":"2099-12-31"},
+{"code":"DPN","paidUpTo":"2099-12-31"},
+{"code":"RC","paidUpTo":"2099-12-31"},
+{"code":"PS","paidUpTo":"2099-12-31"},
+{"code":"DC","paidUpTo":"2099-12-31"},
+{"code":"RM","paidUpTo":"2099-12-31"},
+{"code":"CL","paidUpTo":"2099-12-31"},
+{"code":"PC","paidUpTo":"2099-12-31"},
+{"code":"DB","paidUpTo":"2099-12-31"},
+{"code":"GO","paidUpTo":"2099-12-31"},
+{"code":"RD","paidUpTo":"2099-12-31"}
+],
+"hash":"2911276/0",
+"gracePeriodDays":7,
+"autoProlongated":false}
+
+{
+"licenseId":"ThisCrackLicenseId",
+"licenseeName":"idea",  "assigneeName":"",
+ "assigneeEmail":"idea@163.com",
+"licenseRestriction":"For This Crack, Only Test! Please support genuine!!!",  "checkConcurrentUse":false,
+"products":[
+{"code":"II","paidUpTo":"2099-12-31"},
+{"code":"DM","paidUpTo":"2099-12-31"},
+{"code":"AC","paidUpTo":"2099-12-31"},
+{"code":"RS0","paidUpTo":"2099-12-31"},
+{"code":"WS","paidUpTo":"2099-12-31"},
+{"code":"DPN","paidUpTo":"2099-12-31"},
+{"code":"RC","paidUpTo":"2099-12-31"},
+{"code":"PS","paidUpTo":"2099-12-31"},
+{"code":"DC","paidUpTo":"2099-12-31"},
+{"code":"RM","paidUpTo":"2099-12-31"},
+{"code":"CL","paidUpTo":"2099-12-31"},
+{"code":"PC","paidUpTo":"2099-12-31"}
+],
+"hash":"2911276/0",
+"gracePeriodDays":7,
+"autoProlongated":false
+}
+
+
+ThisCrackLicenseId-{ 
+“licenseId”:”ThisCrackLicenseId”, 
+“licenseeName”:”Yanggc”, 
+“assigneeName”:”Yanggc”, 
+“assigneeEmail”:”YoungGengChen@Gmail.com”, 
+“licenseRestriction”:”For This Crack, Only Test! Please support genuine!!!”, 
+“checkConcurrentUse”:false, 
+“products”:[ 
+{“code”:”II”,”paidUpTo”:”2099-12-31”}, 
+{“code”:”DM”,”paidUpTo”:”2099-12-31”}, 
+{“code”:”AC”,”paidUpTo”:”2099-12-31”}, 
+{“code”:”RS0”,”paidUpTo”:”2099-12-31”}, 
+{“code”:”WS”,”paidUpTo”:”2099-12-31”}, 
+{“code”:”DPN”,”paidUpTo”:”2099-12-31”}, 
+{“code”:”RC”,”paidUpTo”:”2099-12-31”}, 
+{“code”:”PS”,”paidUpTo”:”2099-12-31”}, 
+{“code”:”DC”,”paidUpTo”:”2099-12-31”}, 
+{“code”:”RM”,”paidUpTo”:”2099-12-31”}, 
+{“code”:”CL”,”paidUpTo”:”2099-12-31”}, 
+{“code”:”PC”,”paidUpTo”:”2099-12-31”} 
+], 
+“hash”:”2911276/0”, 
+“gracePeriodDays”:7, 
+“autoProlongated”:false}
+
+
+
+
+website download: 
+wget --recursive --no-clobber --page-requisites --html-extension --convert-links --restrict-file-names=windows --domains themesindustry.com --no-parent http://www.themesindustry.com/html/arone
+
+https://colorlib.com/wp/free-event-website-templates/
+https://colorlib.com/wp/free-seo-friendly-website-templates/
+https://colorlib.com/etc/cellon/index.html
+https://themefisher.com/best-free-html5-templates/
+https://freetemplates.pro/demo/maguwohost/
+http://www.themesindustry.com/html/arone/medical.html
+gianfar.ltd.ua/navis/parallax/index.html
+
+rbsconnect: https://rbsconnect.rbspeople.com/Citrix/VCSDesktopWeb/
+
+
+
+
+
+reset intellij evaluation
+#!/bin/bash
+
+echo "removeing evaluation key"
+rm -rf ~/.IntelliJIdea2018.3/config/eval
+#rm ~/.IntelliJIdea2018.3/config/eval/idea183.evaluation.key
+
+echo "resetting evalsprt in options.xml"
+sed -i '/evlsprt/d' ~/.IntelliJIdea2018.3/config/options/other.xml
+
+echo "resetting evalsprt in prefs.xml"
+sed -i '/evlsprt/d' ~/.java/.userPrefs/prefs.xml
+
+
+# https://www.quora.com/Is-there-a-way-to-extends-trial-period-of-Jetbrains-IDE
+
+## or:
+#For IntelliJ IDEA 2017.1.2 EAP on Windows 10, I had to:
+#
+#Go to ´~/.IntelliJIdea2017.1/config´
+#Remove the folder ´eval´
+#Edit file options/options.xml and remove all properties that the name begins with evlsprt, such as:
+#<property name="evlsprt3.171" value="18" />
+#Go to Windows Registry and under subkeys of HKCU\Software\JavaSoft\Prefs\jetbrains\idea delete keys that begin with evlsprt
+
+
+#!/bin/bash
+
+#echo "removeing evaluation key"
+#rm  -rf ~/.IntelliJIdea*/config/eval
+#rm  -rf ~/.GoLand*/config/eval
+#rm  -rf ~/.WebStorm*/config/eval
+
+#rm -rf ~/.java/.userPrefs/jetbrains/goland
+#rm -rf ~/.java/.userPrefs/jetbrains/idea
+#rm -rf ~/.java/.userPrefs/jetbrains/webstorm
+
+#echo "resetting evalsprt in options.xml"
+#sed -i '/evlsprt/d' ~/.IntelliJIdea*/config/options/options.xml
+#sed -i '/evlsprt/d' ~/.GoLand*/config/options/options.xml
+#sed -i '/evlsprt/d' ~/.WebStorm*/config/options/options.xml
+
+#echo "resetting evalsprt in prefs.xml"
+#sed -i '/evlsprt/d' ~/.java/.userPrefs/prefs.xml
+
+
+#echo "change date file"
+#find ~/.IntelliJIdea* -type d -exec touch -t $(date +"%Y%m%d%H%M") {} +;
+#find ~/.IntelliJIdea* -type f -exec touch -t $(date +"%Y%m%d%H%M") {} +;
+
+#find ~/.GoLand* -type d -exec touch -t $(date +"%Y%m%d%H%M") {} +;
+#find ~/.GoLand* -type f -exec touch -t $(date +"%Y%m%d%H%M") {} +;
+
+#find ~/.WebStorm* -type d -exec touch -t $(date +"%Y%m%d%H%M") {} +;
+#find ~/.WebStorm* -type f -exec touch -t $(date +"%Y%m%d%H%M") {} +;
+
+
+
+
+ic enterprise
+https://1c-dn.com/library/1c_enterprise_script/
+https://1c-dn.com/search/?q=procedure+example
+dev: https://1c-dn.com/library/tutorials/practical_developer_guide_data_writing_procedure/?sphrase_id=112320
+
+
+
+
+
+
